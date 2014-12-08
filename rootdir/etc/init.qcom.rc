@@ -103,6 +103,7 @@ on init
 
 # Vibrator permission
     chown system /sys/devices/virtual/timed_output/vibrator/pwm_value_1p
+    restorecon /sys/devices/virtual/timed_output/vibrator/pwm_value_1p
 
 on fs
     mkdir /devlog 0700 root root
@@ -444,7 +445,7 @@ service iprenew_wlan0 /system/bin/dhcpcd -n
     disabled
     oneshot
 
-service irsc_util /system/bin/logwrapper /system/bin/irsc_util "/etc/sec_config"
+service irsc_util /system/bin/irsc_util "/etc/sec_config"
     class main
     user root
     oneshot
@@ -509,18 +510,6 @@ service qmuxd /system/bin/qmuxd
     user radio
     group radio audio gps bluetooth
 
-service qrngd /system/bin/qrngd -f
-   class main
-   user root
-   group root
-
-service qrngp /system/bin/qrngp
-    class main
-    user root
-    group root
-    oneshot
-    disabled
-
 service qseecomd /system/bin/qseecomd
    class main
    user root
@@ -567,9 +556,13 @@ service ril-daemon1 /system/bin/rild -c 1
 
 # Properties start here
 on property:persist.radio.multisim.config=dsds
+    symlink rild1 /dev/socket/rild2
+    symlink rild-debug1 /dev/socket/rild-debug2
     start ril-daemon1
 
 on property:persist.radio.multisim.config=dsda
+    symlink rild1 /dev/socket/rild2
+    symlink rild-debug1 /dev/socket/rild-debug2
     start ril-daemon1
 
 on property:bluetooth.hciattach=true
