@@ -20,7 +20,7 @@
 # definition file).
 #
 
-TARGET_OTA_ASSERT_DEVICE := a5,a5dug,a5dwg,a5chl,a5ul
+TARGET_OTA_ASSERT_DEVICE := a5,a5tl,a5dug,a5dwg,a5chl,a5ul
 
 BOARD_VENDOR := htc
 
@@ -41,9 +41,6 @@ TARGET_CPU_SMP := true
 TARGET_CPU_VARIANT := cortex-a7
 TARGET_USE_QCOM_BIONIC_OPTIMIZATION := true
 
-# Flags
-COMMON_GLOBAL_CFLAGS += -DHTCLOG
-
 # Kernel
 BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.hardware=qcom user_debug=31 ehci-hcd.park=3 zcache
 BOARD_KERNEL_BASE := 0x00000000
@@ -60,6 +57,8 @@ BOARD_USES_QCOM_HARDWARE := true
 # Audio
 AUDIO_FEATURE_DISABLED_MULTI_VOICE_SESSIONS := true
 BOARD_USES_ALSA_AUDIO := true
+AUDIO_FEATURE_LOW_LATENCY_PRIMARY := true
+AUDIO_FEATURE_ENABLED_LOW_LATENCY_CAPTURE := true
 
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
@@ -91,7 +90,11 @@ TARGET_SPECIFIC_HEADER_PATH := device/htc/a5/include
 TARGET_PROVIDES_LIBLIGHT := true
 
 # Logging
+COMMON_GLOBAL_CFLAGS += -DHTCLOG -DMOTOROLA_LOG
 TARGET_USES_LOGD := false
+
+# NFC
+BOARD_NFC_CHIPSET := pn547
 
 # Power
 TARGET_POWERHAL_VARIANT := qcom
@@ -145,16 +148,22 @@ include device/qcom/sepolicy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += device/htc/a5/sepolicy
 
 BOARD_SEPOLICY_UNION += \
+    akmd.te \
+    device.te \
     file_contexts \
     file.te \
     init.te \
     kcal_dev.te \
+    kernel.te \
     mediaserver.te \
     mm-qcamerad.te \
     mpdecision.te \
     platform_app.te \
+    property_contexts \
+    recovery.te \
     rmt_storage.te \
     system_app.te \
+    system_server.te \
     thermal-engine.te \
     ueventd.te \
     vibe_dev.te \
